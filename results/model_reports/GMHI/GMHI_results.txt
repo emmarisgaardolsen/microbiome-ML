@@ -1,0 +1,8 @@
+
+GHMI - test - Accuracy: 0.714
+Classification Report:
+0: {'precision': 0.936, 'recall': 0.702, 'f1-score': 0.802, 'support': 561}
+1: {'precision': 0.353, 'recall': 0.771, 'f1-score': 0.484, 'support': 118}
+accuracy: 0.714
+macro avg: {'precision': 0.644, 'recall': 0.737, 'f1-score': 0.643, 'support': 339.5}
+weighted avg: {'precision': 0.835, 'recall': 0.714, 'f1-score': 0.747, 'support': 679}

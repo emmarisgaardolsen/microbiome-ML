@@ -1,0 +1,6 @@
+Linear_SVC_Optimized:
+  C: 0.001
+  loss: squared_hinge
+  penalty: l2
+  tol: 0.01
+

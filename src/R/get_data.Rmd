@@ -1,0 +1,212 @@
+---
+title: "Extracting curatedMetagenomicData"
+author: "Emma Olsen"
+date: "2024-04-13"
+output: html_document
+---
+
+```{r}
+RStudio.Version()
+```
+
+```{r setup, include=FALSE}
+
+pacman::p_load(curatedMetagenomicData, 
+               tidyverse, 
+               knitr, 
+               rmdformats, 
+               coop,
+               xtable)
+
+knitr::opts_chunk$set(echo = TRUE)
+
+# global options
+options(max.print="75")
+opts_chunk$set(fig.width=8, 
+               fig.height=5, 
+               fig.path='Figs/',
+               echo=TRUE, 
+               warning=FALSE, 
+               message=FALSE, 
+               cache=TRUE,
+               prompt=FALSE,
+               tidy=TRUE)
+
+opts_knit$set(width=75)
+
+```
+
+
+## Extract the full data 
+
+```{r}
+full_subset <- 
+  filter(sampleMetadata, body_site == "stool" & age >= 18) %>%
+  select(where(~!all(is.na(.x))))  %>%   # columns of all NA values are dropped
+  returnSamples(dataType = "relative_abundance", # relative abundance tables (so values in one sample sum to 1 (apx))
+                rownames = "long") # row names are in long format
+```
+
+```{r}
+full_df <- as.data.frame(t(assay(full_subset))) %>% 
+  rownames_to_column()
+
+# change column 'rowname' to 'sample_id'
+full_df <- full_df %>% rename(sample_id = rowname)
+
+write.csv(full_df, "../../data/raw/full_df.csv", row.names = TRUE)
+```
+
+```{r}
+# extract background info (meta data) for each sample
+full_subset_meta <- as.data.frame(colData(full_subset)) %>% 
+  rownames_to_column()
+full_subset_meta <- full_subset_meta %>% rename(sample_id = rowname)
+```
+
+```{r}
+merged_df <- merge(full_subset_meta,full_df, by = 'sample_id')
+write.csv(merged_df, "../../data/raw/full_df_with_meta.csv", row.names = TRUE)
+```
+
+
+## Extract the healthy data 
+
+```{r}
+healthy_subset <- 
+  filter(sampleMetadata, study_condition == "control" & body_site == "stool" & disease == "healthy" & age >= 18) %>%
+  select(where(~!all(is.na(.x))))  %>%   # columns of all NA values are dropped
+  returnSamples(dataType = "relative_abundance", # relative abundance tables (so values in one sample sum to 1 (apx))
+                rownames = "long") # row names are in long format
+```
+
+Running the above chunk provides details from the data. First of all, the output of the chunk signifies that the latest update of the data snapshot is on the date 2023-10-24. Each entry refers to a specific dataset from a study in the format `YYYY-MM-DD_studyname`. The data is stored in a `SummarizedExperiment` object, which is a Bioconductor class that stores data in a matrix-like format. The data is stored in the `assay` slot of the object. The `colData` slot contains metadata about the samples, and the `rowData` slot contains metadata about the features. 
+
+The output says, for certain studies: "dropping rows without rowTree matches", which means that the data is filtered to only include rows that are present in the rowTree. So this indicates the removal of specific microbial taxa from the analysis because they don't have the corresponding entries in the hierarchical structure called the "rowTree". So some rows from the original data is removed because they are not present in the rowtree. The rowtree is a phylogenetic tree that describes the relationships between the features in the data. It is defined by the `rowData` slot of the `SummarizedExperiment` object. So the listed rows in the output above are the rows that cannot be matched to the rowtree, and thus they are removed. Everything else is kept. 
+
+For instance, the line:
+
+`k__Bacteria|p__Actinobacteria|c__Coriobacteriia|o__Coriobacteriales|f__Coriobacteriaceae|g__Collinsella|s__Collinsella_stercoris`
+Represents a full taxonomic classification from kingdom (k__Bacteria) to species (s__Collinsella_stercoris). Each component of these lines represents a taxonomic level:
+
+`k__` - Kingdom
+`p__` - Phylum
+`c__` - Class
+`o__` - Order
+`f__` - Family
+`g__` - Genus
+`s__` - Species
+
+
+```{r}
+healthy_df <- as.data.frame(t(assay(healthy_subset))) %>% 
+  rownames_to_column()
+
+# change column 'rowname' to 'sample_id'
+healthy_df <- healthy_df %>% rename(sample_id = rowname)
+
+# save csv file 
+write.csv(healthy_df, "../../data/raw/healthy_subset_df.csv", row.names = TRUE)
+```
+
+```{r}
+
+# extract background info (meta data) for each sample
+healthy_subset_meta <- as.data.frame(colData(healthy_subset)) %>% 
+  rownames_to_column()
+
+healthy_subset_meta <- healthy_subset_meta %>% rename(sample_id = rowname)
+
+```
+
+```{r}
+# save dataset including meta data 
+merged_df <- merge(healthy_subset_meta,healthy_df, by = 'sample_id')
+write.csv(merged_df, "../../data/raw/healthy_subset_df_with_meta.csv", row.names = TRUE)
+```
+
+
+## Explore the data subset without meta data
+```{r}
+# check if data is sparse, considering all columns but the first which is sample_id
+# define matrix as a subset of healthy_df containing all columns but the first which is sample_id
+healthy_subset_matrix <- as.matrix(healthy_df[,-1])
+sparsity(healthy_subset_matrix, proportion = TRUE) # 0.94 
+```
+
+### Lactobacillus 
+```{r}
+# count the number of column names containing the word "Lactobacillus" (case insensitive)
+sum(grepl("Lactobacillus", colnames(healthy_df), ignore.case = TRUE))
+```
+
+```{r}
+lacto_idx = grep("Lactobacillus", colnames(healthy_df)) # find the indices into the matrix that is some kind of lactobacillus
+```
+
+So each column in the dataframe represents a sample. The rows represent the abundance of a specific microbial taxon in the sample. The row names are the taxonomic classifications of the microbial taxa. The column names are the sample IDs.
+
+The below chunk calculates the sum of the abundance of all Lactobacilli per sample. So it adds together the abundance values of all Lactobacilli in each sample. 
+
+
+## Explore the meta data 
+```{r}
+
+meta_csv <- "../../data/healthy_subset_df_with_meta.csv"
+meta <- read_csv(meta_csv)
+
+```
+
+```{r}
+# print unique values in the age_category column
+unique(meta$age_category)
+```
+
+```{r}
+
+summary_table <- meta %>%
+  group_by(study_name) %>%
+  summarise(
+    Samples = n(),
+    Countries = list(unique(country)),
+    Male = sum(gender == "male", na.rm = TRUE),
+    Female = sum(gender == "female", na.rm = TRUE),
+    Median_age = as.integer(median(age, na.rm = TRUE)),
+    Min_age = as.integer(min(age, na.rm = TRUE)),
+    Max_age = as.integer(max(age, na.rm = TRUE))
+  ) %>%
+  mutate(Countries = sapply(Countries, paste, collapse = ", "))
+
+
+# Print the summary table to check the results
+print(summary_table)
+```
+
+```{r}
+xtable(summary_table)
+```
+
+```{r}
+# generate a summary table with study specific distribution of geography, age, gender, BMI, and sample numbers 
+summary_table <- meta %>%
+  group_by(study_name) %>%
+  summarise(
+    Samples = n(),
+    Countries = list(unique(country)),
+    Males = sum(gender == "male", na.rm = TRUE),
+    Females = sum(gender == "female", na.rm = TRUE),
+    Adult = sum(age_category == "adult", na.rm = TRUE),
+    Senior = sum(age_category == "senior", na.rm = TRUE),
+    Schoolage = sum(age_category == "schoolage", na.rm = TRUE),
+    Min_BMI = min(BMI, na.rm = TRUE),
+    Median_BMI = median(BMI, na.rm = TRUE),
+    Max_BMI = max(BMI, na.rm = TRUE)
+  ) %>%
+  mutate(Countries = sapply(Countries, function(x) paste(split(x, ceiling(seq_along(x)/2)), collapse = ",\\\ ")))
+
+# Print the summary table
+print(summary_table)
+```
+```{r}
+xtable(summary_table)
+```
