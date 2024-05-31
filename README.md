@@ -55,7 +55,7 @@ The extracted data is not included in this GitHub repo as its size exceeds the l
 | `src/R/get_data.Rmd`               | R markdown for extracting microbiome and demographic data|
 | `src/nbs/preproc.ipynb`           | Preprocess data and create datasplits for different feature sets. |
 | `src/nbs/analysis.ipynb`         | Train and test all the binary classifiers including benchmark models on each dataset. |
-| `src/nbs/mdoel_comparison.ipynb`         | Compare evaluation metrics for different models and feature sets, and generate figures and result tables|
+| `src/nbs/model_comparison.ipynb`         | Compare evaluation metrics for different models and feature sets, and generate figures and result tables|
 
 ## Contact 
 For any inquiries regarding the project or collaboration, please contact Emma Risgaard Olsen at eol@post.au.dk.
