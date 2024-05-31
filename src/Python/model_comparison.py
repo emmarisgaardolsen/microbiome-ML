@@ -1,7 +1,4 @@
-# %% [markdown]
-# # Model comparison
 
-# %%
 import os
 import sys
 import pandas as pd
@@ -11,16 +8,11 @@ from pathlib import Path
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-# %%
 plt.rcParams['font.family'] = 'serif'
 
-# %% [markdown]
-# # Gupta GHMI performance for comparison
-
-# %% [markdown]
+# Gupta GHMI performance for comparison.
 # Gupta and colleagues test their index on a dataset of size 679, of which 118 are healthy and 561 are unhealthy. They have 91 true positives, 27 false negatives, 167 false positives, and 394 true negatives. 
 
-# %%
 # load data
 root = Path.cwd().parents[1]
 
@@ -112,10 +104,9 @@ file_path = root / 'results/model_reports/GMHI/GMHI_results.txt'
 file_path.parent.mkdir(parents=True, exist_ok=True)
 file_path.write_text(text_content)
 
-# %% [markdown]
+
 # ## 0. Read in model reports & ROC AUC data from test splits
 
-# %%
 # define root dir
 root = Path.cwd().parents[1]
 results_root = root / "results/model_reports/"
@@ -124,7 +115,6 @@ results_root = root / "results/model_reports/"
 subdirs = [x for x in results_root.iterdir() if x.is_dir()]
 subdirs 
 
-# %%
 # initialise an empty list to store DataFrames
 dfs = []
 
@@ -161,8 +151,6 @@ rocauc_df = pd.concat(dfs, ignore_index=True)
 rocauc_df = rocauc_df.sort_values(by='ROCAUC', ascending=False)
 rocauc_df
 
-
-# %%
 # define the root directory
 root = Path.cwd().parents[1]
 results_root = root / "results/model_reports/"
@@ -204,12 +192,10 @@ def extract_metrics(section):
 # list to store all data
 all_data = []
 
-# %%
 # list all files in results_root
 files = list(results_root.glob('**/*.txt'))
 files
 
-# %%
 # iterate over all directories in the results/model_reports directory
 
 # iterate over all subdirs in the results_root regardless of pattern in the name
@@ -253,14 +239,14 @@ for directory in combined_df['Directory'].unique():
 
 combined_df
 
-# %%
+
 # Ensure 'Model' is 'Random_Forest_Optimized' where 'Directory' is 'GMHI'
 combined_df.loc[combined_df['Directory'] == 'GMHI', 'Model'] = 'Random_Forest_Optimized'
 
 # Verify the changes
 combined_df
 
-# %%
+
 # Create subset with all test splits
 test_splits = combined_df[combined_df['Split'].str.contains('test')]
 
@@ -287,16 +273,14 @@ test_eval = test_eval.round(3)
 
 test_eval
 
-
-# %% [markdown]
 # ## 1. Save macro_avg_recall result tables
 
-# %%
+
 # First I prepare a folder in which I can save the result figs
 figs_root = root / "figs/"
 figs_root.mkdir(exist_ok=True)
 
-# %%
+
 # ---- MAKE THE OVERALL RESULTS DF ---- # 
 test_eval_macro_avg_recall = test_eval[['Directory', 'Model', 'macro_avg_recall']]
 # restructure the dataframe
@@ -318,16 +302,12 @@ macro_avg_recall_df = macro_avg_recall_df[['Directory', 'RF', 'XGB','SVC','LogRe
 macro_avg_recall_df = pd.DataFrame(macro_avg_recall_df)
 macro_avg_recall_df
 
-# %% [markdown]
-# 
-
-# %% [markdown]
 # ### 1.1 Create result table for data w/o balancing
 
-# %%
+
 # subset test_eval where Directory doesn't coontain 'undersampled' or 'smote'
 imbal_macro_avg_recall = macro_avg_recall_df[~macro_avg_recall_df['Directory'].str.contains('undersampled', case=False)]
-# 
+#
 # Remove rows where 'Directory'=='50SPC'
 imbal_macro_avg_recall = imbal_macro_avg_recall[imbal_macro_avg_recall['Directory'] != '50SPC']
 
@@ -356,10 +336,10 @@ imbal_macro_avg_recall.to_csv(figs_root / 'imbalanced_macroavg_recall.csv', inde
 
 imbal_macro_avg_recall
 
-# %% [markdown]
+
 # ### 1.2 Create result table for data w undersampling
 
-# %%
+
 # remove rows from where 'Directory' does not contain the string 'undersampled'
 undersampled_macro_avg_recall_df = macro_avg_recall_df[macro_avg_recall_df['Directory'].str.contains('undersampled|GMHI', na=False)]
 undersampled_macro_avg_recall_df = undersampled_macro_avg_recall_df[undersampled_macro_avg_recall_df['Directory'] != '50SPC_undersampled'] # remove the 50SPC_undersampled row because I use use 50SPC_CLR_undersampled as we always want to CLRtransform (better performance). 
@@ -373,10 +353,10 @@ undersampled_macro_avg_recall_df.to_csv(figs_root / 'undersampled_macroavg_recal
 undersampled_macro_avg_recall_df
 
 
-# %% [markdown]
+
 # ### 1.3 Create result table for data w SMOTE
 
-# %%
+
 # remove rows from where 'Directory' does not contain the string 'undersampled'
 smote_macro_avg_recall_df = macro_avg_recall_df[macro_avg_recall_df['Directory'].str.contains('smote', na=False)]
 smote_macro_avg_recall_df = smote_macro_avg_recall_df[smote_macro_avg_recall_df['Directory'] != '50SPC_smote'] # remove the 50SPC_undersampled row because I use use 50SPC_CLR_undersampled as we always want to CLRtransform (better performance). 
@@ -391,10 +371,10 @@ smote_macro_avg_recall_df.to_csv(figs_root / 'smote_macroavg_recall.csv', index=
 smote_macro_avg_recall_df
 
 
-# %% [markdown]
+
 # ## 2. Save macro_avg_f1-score result tables
 
-# %%
+
 test_eval_macro_avg_f1 = test_eval[['Directory', 'Model', 'macro_avg_f1-score']]
 test_eval_macro_avg_f1
 
@@ -419,10 +399,10 @@ macro_avg_f1_df = macro_avg_f1_df[['Directory', 'RF', 'XGB', 'SVC', 'LogReg','KN
 macro_avg_f1_df = pd.DataFrame(macro_avg_f1_df)
 macro_avg_f1_df
 
-# %% [markdown]
+
 # ### 2.1 Create result table for data w/o balancing
 
-# %%
+
 # remove rows from the DataFrame where the 'Directory' column contains the strings 'undersampled' or 'smote' 
 imbal_macro_avg_f1 = macro_avg_f1_df[~macro_avg_f1_df['Directory'].str.contains('undersampled|smote', case=False)]
 # remove row where 'Directory'=='50SPC'
@@ -441,14 +421,14 @@ imbal_macro_avg_f1
 imbal_macro_avg_f1.iloc[:,1:] = imbal_macro_avg_f1.iloc[:,1:] * 100
 imbal_macro_avg_f1
 
-# %%
+
 imbal_macro_avg_f1.to_csv(figs_root / 'imbalanced_macroavg_f1.csv', index=False)
 imbal_macro_avg_f1
 
-# %% [markdown]
+
 # ### 2.2 Create result table for data w undersampling
 
-# %%
+
 # remove rows from where 'Directory' does not contain the string 'undersampled'
 undersampled_macro_avg_f1_df = macro_avg_f1_df[macro_avg_f1_df['Directory'].str.contains('undersampled|GMHI', na=False)]
 undersampled_macro_avg_f1_df = undersampled_macro_avg_f1_df[undersampled_macro_avg_f1_df['Directory'] != '50SPC_undersampled'] # remove the 50SPC_undersampled row because I use use 50SPC_CLR_undersampled as we always want to CLRtransform (better performance). 
@@ -459,15 +439,15 @@ undersampled_macro_avg_f1_df['Directory'] = undersampled_macro_avg_f1_df['Direct
 
 undersampled_macro_avg_f1_df
 
-# %%
+
 # save undersampled as a csv file
 undersampled_macro_avg_f1_df.to_csv(figs_root / 'undersampled_macroavg_f1.csv', index=False)
 
 
-# %% [markdown]
+
 # ### 2.3 Create result table for data w SMOTE
 
-# %%
+
 # remove rows from where 'Directory' does not contain the string 'undersampled'
 smote_macro_avg_f1_df = macro_avg_f1_df[macro_avg_f1_df['Directory'].str.contains('smote|GMHI', na=False)]
 smote_macro_avg_f1_df = smote_macro_avg_f1_df[smote_macro_avg_f1_df['Directory'] != '50SPC_smote'] # remove the 50SPC_undersampled row because I use use 50SPC_CLR_undersampled as we always want to CLRtransform (better performance). 
@@ -482,13 +462,8 @@ smote_macro_avg_f1_df.to_csv(figs_root / 'smote_macroavg_f1.csv', index=False)
 smote_macro_avg_f1_df
 
 
-# %% [markdown]
-# 
-
-# %% [markdown]
 # ## 3. Create weighted_avg_f1-score result tables
 
-# %%
 # ---- MAKE THE OVERALL RESULTS DF ---- # 
 test_eval_weighted_avg_f1 = test_eval[['Directory', 'Model', 'weighted_avg_f1-score']]
 # restructure the dataframe
@@ -510,10 +485,10 @@ weighted_avg_f1_df = weighted_avg_f1_df[['Directory', 'RF', 'XGB','SVC', 'LogReg
 weighted_avg_f1_df = pd.DataFrame(weighted_avg_f1_df)
 weighted_avg_f1_df
 
-# %% [markdown]
+
 # ### 3.1. Create result table for data w/o balancing
 
-# %%
+
 imbal_weighted_avg_f1 = weighted_avg_f1_df
 
 # Remove rows where 'Directory'=='50SPC'
@@ -540,10 +515,10 @@ imbal_weighted_avg_f1.to_csv(figs_root / 'imbalanced_weightedavg_f1.csv', index=
 imbal_weighted_avg_f1
 
 
-# %% [markdown]
+#
 # ### 3.2 Create result table for data w undersampling
 
-# %%
+
 # remove rows from where 'Directory' does not contain the string 'undersampled'
 undersampled_weighted_avg_f1_df = weighted_avg_f1_df[weighted_avg_f1_df['Directory'].str.contains('undersampled|GMHI', na=False)]
 undersampled_weighted_avg_f1_df = undersampled_weighted_avg_f1_df[undersampled_weighted_avg_f1_df['Directory'] != '50SPC_undersampled'] # remove the 50SPC_undersampled row because I use use 50SPC_CLR_undersampled as we always want to CLRtransform (better performance). 
@@ -554,11 +529,11 @@ undersampled_weighted_avg_f1_df['Directory'] = undersampled_weighted_avg_f1_df['
 
 undersampled_weighted_avg_f1_df
 
-# %%
+
 # save undersampled as a csv file
 undersampled_weighted_avg_f1_df.to_csv(figs_root / 'undersampled_weightedavg_f1.csv', index=False)
 
-# %% [markdown]
+#
 # ### 3.3 Create result table for data w SMOTE
 
 # %%
@@ -576,7 +551,7 @@ smote_weighted_avg_f1_df.to_csv(figs_root / 'smote_weightedavg_f1.csv', index=Fa
 smote_weighted_avg_f1_df
 
 
-# %% [markdown]
+#
 # ## 4. Visualisation of Model Performances
 
 # %%
@@ -739,10 +714,10 @@ plt.show()
 # %%
 
 
-# %% [markdown]
+#
 # 
 
-# %% [markdown]
+#
 # # Random Forest Confusion Matrix Plots (imb data only)
 
 # %%
