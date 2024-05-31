@@ -1,0 +1,14 @@
+Neural_Network - train - Accuracy: Not Evaluated
+Classification Report:
+
+Neural_Network - val - Accuracy: Not Evaluated
+Classification Report:
+
+Neural_Network - test - Accuracy: 0.6904376149177551
+Classification Report:
+0: {'precision': 0.7510504201680672, 'recall': 0.8313953488372093, 'f1-score': 0.7891832229580574, 'support': 860.0}
+1: {'precision': 0.4858156028368794, 'recall': 0.3663101604278075, 'f1-score': 0.4176829268292683, 'support': 374.0}
+accuracy: 0.6904376012965965
+macro avg: {'precision': 0.6184330115024733, 'recall': 0.5988527546325084, 'f1-score': 0.6034330748936628, 'support': 1234.0}
+weighted avg: {'precision': 0.6706632064874641, 'recall': 0.6904376012965965, 'f1-score': 0.6765891299660257, 'support': 1234.0}
+
