@@ -48,13 +48,14 @@ bash setup.sh
 
 ## Usage
 
-The extracted data is not included in this GitHub repo as its size exceeds the limits of GitHub storage. However, the data can be outputted from running the code in the `get_data.Rmd` in the `src/R/` directory and subsequently preprocessing it through the `backup_preproc.ipynb` code in `src/Python/’. 
+The extracted data is not included in this GitHub repo as its size exceeds the limits of GitHub storage. However, the full analysis, including data extraction, can be replicated by running the following code in the specified order:
 
-
-0. `microbiome-ML/src/R/get_data.Rmd` for fetching data (data is already fetched and stored in the `data/` directory)
-1. `EDA.ipynb` for some exploratory data analysis 
-2. `preproc.ipynb` for preprocessing the data (creating outcome variable and making data splits)
-
+| File             | Description |
+|---------------------------|-------------|
+| `src/R/get_data.Rmd`               | R markdown for extracting microbiome and demographic data|
+| `src/nbs/preproc.ipynb`           | Preprocess data and create datasplits for different feature sets. |
+| `src/nbs/analysis.ipynb`         | Train and test all the binary classifiers including benchmark models on each dataset. |
+| `src/nbs/mdoel_comparison.ipynb`         | Compare evaluation metrics for different models and feature sets, and generate figures and result tables|
 
 ## Contact 
 For any inquiries regarding the project or collaboration, please contact Emma Risgaard Olsen at eol@post.au.dk.
