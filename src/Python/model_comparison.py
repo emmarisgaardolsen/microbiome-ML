@@ -514,8 +514,6 @@ imbal_weighted_avg_f1.iloc[:,1:] = imbal_weighted_avg_f1.iloc[:,1:] * 100
 imbal_weighted_avg_f1.to_csv(figs_root / 'imbalanced_weightedavg_f1.csv', index=False)
 imbal_weighted_avg_f1
 
-
-#
 # ### 3.2 Create result table for data w undersampling
 
 
@@ -533,10 +531,9 @@ undersampled_weighted_avg_f1_df
 # save undersampled as a csv file
 undersampled_weighted_avg_f1_df.to_csv(figs_root / 'undersampled_weightedavg_f1.csv', index=False)
 
-#
 # ### 3.3 Create result table for data w SMOTE
 
-# %%
+
 # remove rows from where 'Directory' does not contain the string 'undersampled'
 smote_weighted_avg_f1_df = weighted_avg_f1_df[weighted_avg_f1_df['Directory'].str.contains('smote|GMHI', na=False)]
 smote_weighted_avg_f1_df = smote_weighted_avg_f1_df[smote_weighted_avg_f1_df['Directory'] != '50SPC_smote'] # remove the 50SPC_undersampled row because I use use 50SPC_CLR_undersampled as we always want to CLRtransform (better performance). 
@@ -551,10 +548,8 @@ smote_weighted_avg_f1_df.to_csv(figs_root / 'smote_weightedavg_f1.csv', index=Fa
 smote_weighted_avg_f1_df
 
 
-#
-# ## 4. Visualisation of Model Performances
 
-# %%
+# ## 4. Visualisation of Model Performances
 # subset combined_df where directory is '50SPC_CLR', 'baseline', 'CLR_PRC_LowAbFilt', or 'GMHI'
 
 dirs_to_plot = ['50SPC_CLR', 'baseline', 'CLR_PCA_LowAbFilt']
@@ -652,8 +647,6 @@ for directory in metrics_to_plot_df['Directory'].unique():
     # Show the plot
     plt.show()
 
-
-# %%
 # make one 3x3 plot to save
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -711,16 +704,8 @@ plt.show()
 
 
 
-# %%
 
-
-#
-# 
-
-#
 # # Random Forest Confusion Matrix Plots (imb data only)
-
-# %%
 # set default font size
 plt.rcParams.update({'font.size': 22})
 # set default legend font size
