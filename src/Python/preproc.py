@@ -1,4 +1,3 @@
-# %%
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -9,30 +8,17 @@ from sklearn import datasets
 from pathlib import Path
 from sklearn.model_selection import train_test_split
 from sklearn.decomposition import PCA, TruncatedSVD
-# !pip install scikit-bio
 import skbio
 from skbio.stats.composition import clr
 from sklearn.model_selection import train_test_split
-import numpy as np
-import pandas as pd
-from pathlib import Path
 from skbio.stats.composition import closure, clr
 from scipy.stats import gmean
 from sklearn.preprocessing import StandardScaler
 import imblearn
 from imblearn import over_sampling
 from imblearn.over_sampling import SMOTE
+from sklearn.preprocessing import StandardScaler
 
-
-# %%
-path = '/Users/emmaolsen/Desktop/datsci_backup_23/MB-LM-24/data/50SPC/train.csv'
-data = pd.read_csv(path)
-data
-
-# %% [markdown]
-# # Baseline
-
-# %%
 # Load data
 root = Path.cwd().parents[1]
 path = root / "data" / "raw" / "full_df_with_meta.csv"
@@ -65,12 +51,12 @@ demographic_data = pd.get_dummies(data, columns=categorical_vars, drop_first=Tru
 encoded_variables = list(demographic_data.columns)
 selected_variables = [var for var in encoded_variables if any(orig_var in var for orig_var in ['age', 'gender', 'country', 'diet', 'smoker', 'alcohol'])]
 
-# Drop rows with any NaN values (it is okay that we filter out after, because pandas ignores rows with NaN values so we don't lose any data)
+# Drop rows with any NaN values
 data = demographic_data.dropna()
 
-# split data into features (X) and target (y)
-X = data[selected_variables]
-y = data['healthy']
+# Scale age column
+scaler = StandardScaler()
+data['age'] = scaler.fit_transform(data[['age']])
 
 # Split data into features (X) and target (y)
 X = data.drop(columns='healthy')
@@ -109,6 +95,7 @@ for (X, y), csv_name in zip(datasets.values(), csv_names):
     combined_data = combined_data.dropna(how='all')  # Ensure no empty rows before saving
     combined_data.to_csv(output_dir / csv_name, index=False)
 
+
 # %% [markdown]
 # # Baseline undersampled
 
@@ -136,8 +123,8 @@ selected_variables = [
 
 # drop all columns that are not 'healthy' or in the selected_variables list
 data = data[[col for col in data.columns if 'healthy' in col or col in selected_variables]]
-# One-hot encode categorical variables with 0/1 encoding
 
+# One-hot encode categorical variables with 0/1 encoding
 categorical_vars = ['gender', 'country', 'diet', 'smoker', 'ever_smoker','alcohol']
 demographic_data = pd.get_dummies(data, columns=categorical_vars, drop_first=True, dtype=int)
 
@@ -147,6 +134,10 @@ selected_variables = [var for var in encoded_variables if any(orig_var in var fo
 
 # Drop rows with any NaN values
 data = demographic_data.dropna()
+
+# Scale age column
+scaler = StandardScaler()
+data['age'] = scaler.fit_transform(data[['age']])
 
 # split data into features (X) and target (y)
 X = data[selected_variables]
@@ -204,6 +195,7 @@ for (X, y), csv_name in zip(datasets.values(), csv_names):
     combined_data = pd.concat([X.reset_index(drop=True), y.reset_index(drop=True)], axis=1)
     combined_data.to_csv(output_dir / csv_name, index=False)
 
+
 # %% [markdown]
 # # Baseline SMOTE
 
@@ -242,6 +234,10 @@ selected_variables = [var for var in encoded_variables if any(orig_var in var fo
 
 # Drop rows with any NaN values
 data = demographic_data.dropna()
+
+# Scale age column
+scaler = StandardScaler()
+data['age'] = scaler.fit_transform(data[['age']])
 
 # split data into features (X) and target (y)
 X = data[selected_variables]
@@ -885,6 +881,58 @@ disease_info = pd.DataFrame({
 disease_info.to_csv('disease_info.csv', index=False)
 
 # %%
+from sklearn.decomposition import PCA
+from sklearn.model_selection import train_test_split
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from pathlib import Path
+
+# Load data
+root = Path.cwd().parents[1]
+full = root / "data" / "raw" / "full_df_with_meta.csv"
+full_df_with_meta = pd.read_csv(full)
+
+full_df_with_meta = full_df_with_meta.dropna(subset=['study_condition'])
+
+# Remove carcinoma_surgery_history
+full_df_with_meta = full_df_with_meta[full_df_with_meta['study_condition'] != "carcinoma_surgery_history"]
+
+# Create 'healthy' column if person is flagged as control AND has a BMI within the healthy range
+full_df_with_meta['healthy'] = np.where(
+    (full_df_with_meta["study_condition"] == "control") & (full_df_with_meta["BMI"] >= 18.5) & (full_df_with_meta["BMI"] < 25), 1, 0
+)
+
+# Get shape of full_df_with_meta
+print(f"The number of sample before removing subjects with carcinoma surgery history: {full_df_with_meta.shape}")  # (8261,1585)
+# Remove the samples with study_condition == carcinoma_surgery_history
+full_df_with_meta = full_df_with_meta[full_df_with_meta['study_condition'] != "carcinoma_surgery_history"]
+print(f"The number of sample after removing subjects with carcinoma surgery history: {full_df_with_meta.shape}")  # (8221,1585)
+print(full_df_with_meta['study_condition'].value_counts())  # 5620 healthy controls, 2641 patients
+
+# Get number of unique subject_id
+print(f"The number of unique subjects in the data are {len(full_df_with_meta.subject_id.unique())}")  # 8221
+
+# Save a .txt file with all the unique values in the study_condition column
+with open('study_condition_values.txt', 'w') as f:
+    for item in full_df_with_meta['study_condition'].unique():
+        f.write("%s\n" % item)
+
+disease_counts = full_df_with_meta['study_condition'].value_counts().reset_index()
+disease_counts.columns = ['Disease', 'Count']
+
+# Create the structure for the CSV
+disease_info = pd.DataFrame({
+    'Name': disease_counts['Disease'],
+    'Abbreviation': '',
+    'Count': disease_counts['Count'],
+    'Description': '',
+    'Diagnosis': ''
+})
+
+# Save the DataFrame to a CSV file
+disease_info.to_csv('disease_info.csv', index=False)
+
 # Define all bacteria columns as containing the string "|"
 bacteria_columns = [col for col in full_df_with_meta.columns if '|' in col]
 
@@ -933,13 +981,13 @@ X_val_filtered = X_val_clr_df[filtered_columns]
 X_test_filtered = X_test_clr_df[filtered_columns]
 
 # Perform PCA
-pca = PCA(n_components=0.95)
-X_train_pca = pca.fit_transform(X_train_filtered)
-X_val_pca = pca.transform(X_val_filtered)
-X_test_pca = pca.transform(X_test_filtered)
+pca_model = PCA(n_components=0.95)
+X_train_pca = pca_model.fit_transform(X_train_filtered)
+X_val_pca = pca_model.transform(X_val_filtered)
+X_test_pca = pca_model.transform(X_test_filtered)
 
 # Plot cumulative explained variance
-cumulative_explained_variance = np.cumsum(pca.explained_variance_ratio_)
+cumulative_explained_variance = np.cumsum(pca_model.explained_variance_ratio_)
 print(f"Cumulative explained variance is: {cumulative_explained_variance}")
 
 plt.figure(figsize=(8, 6))
@@ -952,7 +1000,7 @@ plt.show()
 
 # Scree plot of explained variance ratio
 plt.figure(figsize=(8, 6))
-plt.bar(range(1, len(pca.explained_variance_ratio_) + 1), pca.explained_variance_ratio_, alpha=0.7, align='center')
+plt.bar(range(1, len(pca_model.explained_variance_ratio_) + 1), pca_model.explained_variance_ratio_, alpha=0.7, align='center')
 plt.xlabel('PCA: Principal Component')
 plt.ylabel('PCA: Explained Variance Ratio')
 plt.title('PCA: Scree Plot')
@@ -986,6 +1034,7 @@ for (X, y), csv_name in zip(datasets.values(), csv_names):
     combined_data = pd.concat([pd.DataFrame(X), y.reset_index(drop=True)], axis=1)
     combined_data.to_csv(output_dir / csv_name, index=False)
 
+
 # %% [markdown]
 # # CLR PCA LowAbFilt undersampled
 
@@ -1016,8 +1065,8 @@ X = full_df_with_meta[bacteria_columns]
 y = full_df_with_meta['healthy']
 
 # Split data into training, testing, and validation sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, random_state=42)
-X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=X_test.shape[0] / X_train.shape[0], random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, random_state=42, stratify=y)
+X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=X_test.shape[0] / X_train.shape[0], random_state=42, stratify=y_train)
 
 # Identify the minority class in the training set
 minority_class = y_train.value_counts().idxmin()
@@ -1122,11 +1171,6 @@ for (X, y), csv_name in zip(datasets.values(), csv_names):
     combined_data.to_csv(output_dir / csv_name, index=False)
 
 
-# %% [markdown]
-# # CLR PCA LowAbFilt SMOTE
-
-# %%
-
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -1154,8 +1198,8 @@ X = full_df_with_meta[bacteria_columns]
 y = full_df_with_meta['healthy']
 
 # Split data into training, testing, and validation sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, random_state=42)
-X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=X_test.shape[0] / X_train.shape[0], random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, random_state=42, stratify=y)
+X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=X_test.shape[0] / X_train.shape[0], random_state=42, stratify=y_train)
 
 # Apply SMOTE to the training data
 smote = SMOTE(random_state=42)
@@ -1243,8 +1287,6 @@ csv_names = ['train.csv', 'val.csv', 'test.csv']
 for (X, y), csv_name in zip(datasets.values(), csv_names):
     combined_data = pd.concat([pd.DataFrame(X), y.reset_index(drop=True)], axis=1)
     combined_data.to_csv(output_dir / csv_name, index=False)
-
-# %%
 
 
 
