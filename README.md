@@ -51,7 +51,7 @@ bash setup.sh
 The extracted data is not included in this GitHub repo as its size exceeds the limits of GitHub storage. However, the data can be outputted from running the code in the `get_data.Rmd` in the `src/R/` directory and subsequently preprocessing it through the `backup_preproc.ipynb` code in `src/Python/’. 
 
 
-0. `/work/EmmaRisgaardOlsen#9993/microbiome-ML/src/R/get_data.Rmd` for fetching data (data is already fetched and stored in the `data/` directory)
+0. `microbiome-ML/src/R/get_data.Rmd` for fetching data (data is already fetched and stored in the `data/` directory)
 1. `EDA.ipynb` for some exploratory data analysis 
 2. `preproc.ipynb` for preprocessing the data (creating outcome variable and making data splits)
 
