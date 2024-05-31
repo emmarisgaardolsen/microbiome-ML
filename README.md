@@ -59,7 +59,7 @@ The extracted data is not included in this GitHub repo as its size exceeds the l
 | `src/nbs/model_comparison.ipynb`         | Compare evaluation metrics for different models and feature sets, and generate figures and result tables|
 
 
-The repository also contains corresponding Python script for running the analysis after running the code in the `get_data.Rmd` file. The Python scripts are located in the `src/Python` directory. To run the script, make sure the `venv` is activated by running `source venv/bin/activate`, and set the working directory to the repository's root directory. Then, the Python scripts can be run in the following order:
+The repository also contains corresponding Python scripts for running the analysis after running the code in the `get_data.Rmd` file. The Python scripts are located in the `src/Python` directory. To run the script, make sure the `venv` is activated by running `source venv/bin/activate`, and set the working directory to the repository's root directory. Then, the Python scripts can be run in the following order:
 
 | File             | Description |
 |---------------------------|-------------|
