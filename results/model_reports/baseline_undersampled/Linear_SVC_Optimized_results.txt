@@ -1,18 +1,18 @@
-Linear_SVC_Optimized - train - Accuracy: 0.6743251005169443
+Linear_SVC_Optimized - train - Accuracy: 0.6740379092475589
 Classification Report:
-0: {'precision': 0.6874613959234095, 'recall': 0.6392877656519241, 'f1-score': 0.6625, 'support': 1741.0}
-1: {'precision': 0.6629092860976918, 'recall': 0.7093624353819644, 'f1-score': 0.6853496115427303, 'support': 1741.0}
-accuracy: 0.6743251005169443
-macro avg: {'precision': 0.6751853410105506, 'recall': 0.6743251005169443, 'f1-score': 0.6739248057713652, 'support': 3482.0}
-weighted avg: {'precision': 0.6751853410105507, 'recall': 0.6743251005169443, 'f1-score': 0.6739248057713652, 'support': 3482.0}
+0: {'precision': 0.687037037037037, 'recall': 0.6392877656519241, 'f1-score': 0.6623028860458197, 'support': 1741.0}
+1: {'precision': 0.6627282491944146, 'recall': 0.7087880528431936, 'f1-score': 0.684984734943103, 'support': 1741.0}
+accuracy: 0.6740379092475589
+macro avg: {'precision': 0.6748826431157258, 'recall': 0.6740379092475588, 'f1-score': 0.6736438104944613, 'support': 3482.0}
+weighted avg: {'precision': 0.6748826431157259, 'recall': 0.6740379092475589, 'f1-score': 0.6736438104944613, 'support': 3482.0}
 
-Linear_SVC_Optimized - val - Accuracy: 0.6555915721231766
+Linear_SVC_Optimized - val - Accuracy: 0.6547811993517018
 Classification Report:
-0: {'precision': 0.8222222222222222, 'recall': 0.6453488372093024, 'f1-score': 0.7231270358306189, 'support': 860.0}
-1: {'precision': 0.4543828264758497, 'recall': 0.679144385026738, 'f1-score': 0.5444801714898178, 'support': 374.0}
-accuracy: 0.6555915721231766
-macro avg: {'precision': 0.6383025243490359, 'recall': 0.6622466111180202, 'f1-score': 0.6338036036602184, 'support': 1234.0}
-weighted avg: {'precision': 0.7107376727820736, 'recall': 0.6555915721231766, 'f1-score': 0.6689828484210082, 'support': 1234.0}
+0: {'precision': 0.8219584569732937, 'recall': 0.6441860465116279, 'f1-score': 0.7222946544980443, 'support': 860.0}
+1: {'precision': 0.45357142857142857, 'recall': 0.679144385026738, 'f1-score': 0.5438972162740899, 'support': 374.0}
+accuracy: 0.6547811993517018
+macro avg: {'precision': 0.6377649427723612, 'recall': 0.6616652157691829, 'f1-score': 0.6330959353860671, 'support': 1234.0}
+weighted avg: {'precision': 0.7103079313474447, 'recall': 0.6547811993517018, 'f1-score': 0.6682260630103952, 'support': 1234.0}
 
 Linear_SVC_Optimized - test - Accuracy: 0.679902755267423
 Classification Report:

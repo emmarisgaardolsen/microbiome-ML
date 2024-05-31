@@ -4,11 +4,11 @@ Classification Report:
 Neural_Network - val - Accuracy: Not Evaluated
 Classification Report:
 
-Neural_Network - test - Accuracy: 0.7228525280952454
+Neural_Network - test - Accuracy: 0.6709886789321899
 Classification Report:
-0: {'precision': 0.7626774847870182, 'recall': 0.8744186046511628, 'f1-score': 0.8147345612134345, 'support': 860.0}
-1: {'precision': 0.5645161290322581, 'recall': 0.37433155080213903, 'f1-score': 0.45016077170418006, 'support': 374.0}
-accuracy: 0.7228525121555915
-macro avg: {'precision': 0.6635968069096382, 'recall': 0.6243750777266509, 'f1-score': 0.6324476664588072, 'support': 1234.0}
-weighted avg: {'precision': 0.7026188567057539, 'recall': 0.7228525121555915, 'f1-score': 0.7042397498062536, 'support': 1234.0}
+0: {'precision': 0.8834459459459459, 'recall': 0.608139534883721, 'f1-score': 0.7203856749311295, 'support': 860.0}
+1: {'precision': 0.4750778816199377, 'recall': 0.8155080213903744, 'f1-score': 0.6003937007874016, 'support': 374.0}
+accuracy: 0.6709886547811994
+macro avg: {'precision': 0.6792619137829419, 'recall': 0.7118237781370477, 'f1-score': 0.6603896878592656, 'support': 1234.0}
+weighted avg: {'precision': 0.7596779912798787, 'recall': 0.6709886547811994, 'f1-score': 0.684018577419173, 'support': 1234.0}
 
