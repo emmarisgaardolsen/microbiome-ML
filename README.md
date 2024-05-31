@@ -20,10 +20,11 @@ The structure below is to be updated.
 |-- LICENCSE
 |-- data/              # Dataset directory, data not included due to size issues but is outputted from code contained in the repo
 |-- src/               # Code for replicating full analysis pipeline
-    |-- Python         # Python code for data pre-processing, modelling and visualisation
-    |-- R              # R code for getting the data
-|-- requirements.txt   # Project dependencies
+    |-- Python/        # Python code for data pre-processing, modelling and visualisation
+    |-- R/             # R code for getting the data
+    |-- nbs/           # Jupyter notebooks for running the analysis
 |-- figs/              # Figures and result tables 
+|-- requirements.txt   # Project dependencies
 |-- README.md          # The top-level guide for using this project
 |-- .gitignore         # Specifies intentionally untracked files to ignore
 |-- setup.sh           # Setup script 
