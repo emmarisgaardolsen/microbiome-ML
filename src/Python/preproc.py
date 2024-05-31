@@ -1,4 +1,3 @@
-# %%
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -20,11 +19,6 @@ from imblearn import over_sampling
 from imblearn.over_sampling import SMOTE
 from sklearn.preprocessing import StandardScaler
 
-
-# %% [markdown]
-# # Baseline
-
-# %%
 # Load data
 root = Path.cwd().parents[1]
 path = root / "data" / "raw" / "full_df_with_meta.csv"
@@ -1177,11 +1171,6 @@ for (X, y), csv_name in zip(datasets.values(), csv_names):
     combined_data.to_csv(output_dir / csv_name, index=False)
 
 
-# %% [markdown]
-# # CLR PCA LowAbFilt SMOTE
-
-# %%
-
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -1298,8 +1287,6 @@ csv_names = ['train.csv', 'val.csv', 'test.csv']
 for (X, y), csv_name in zip(datasets.values(), csv_names):
     combined_data = pd.concat([pd.DataFrame(X), y.reset_index(drop=True)], axis=1)
     combined_data.to_csv(output_dir / csv_name, index=False)
-
-# %%
 
 
 
